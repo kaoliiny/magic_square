@@ -6,6 +6,8 @@
 # include <QtWidgets>
 # include <QString>
 
+# include <iostream>
+# include <sstream>
 # include <vector>
 # include <string>
 

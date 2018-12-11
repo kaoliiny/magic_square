@@ -10,14 +10,19 @@ Q_OBJECT
 
 public:
     MagicSquare(uint size);
-    virtual ~MagicSquare() {};
+    virtual ~MagicSquare();
+
 
 private:
     uint              _size;
-    vector<uint>      *_vec;
+    vector<uint>      _vec;
+    vector<QLabel*>   _lab;
 
-    const uint              elemSize = 15;
-    uint                    elnum;
+    const uint        elemSize = 30;
+    uint              elnum;
+
+    void              print() const;
+    void              buildSquare();
 
 };
 

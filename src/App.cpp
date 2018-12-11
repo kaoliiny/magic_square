@@ -2,7 +2,7 @@
 #include "App.h"
 
 App::App() :
-    text(new QLabel("You can input only numbers from 1 till 100!", this)),
+    text(new QLabel("You can input only numbers from 1 till 90!", this)),
     line(new QLineEdit(this)),
     pushButt(new QPushButton("Build magic square", this)),
     elnum(0)
@@ -45,7 +45,7 @@ void             App::catchClick()
 {
     QString lineContent = line->text();
 
-    if (lineContent.toInt() > 100 || lineContent.toInt() < 1) {
+    if (lineContent.toInt() > limit || lineContent.toInt() < 1) {
         text->setStyleSheet("QLabel { color: red; }");
     } else {
         text->setStyleSheet("QLabel { color: black; }");

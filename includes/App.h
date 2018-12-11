@@ -25,6 +25,7 @@ private:
     const uint              elemSize = 30;
     const uint              marginBottom = 5;
     const uint              x = 300;
+    const int               limit = 90;
     uint                    elnum;
 
 
