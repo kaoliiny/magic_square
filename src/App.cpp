@@ -1,50 +1,55 @@
 
 #include "App.h"
-
 App::App() :
-    Window(),
-    text("You can input only numbers from 1 till 100!", &Window),
-    line(&Window),
-    pushButt("Build magic square", &Window)
-{
-    const int            elemSize = win_y / (3 * 2);
-
-    Window.resize(win_x, win_y);
-    // placeWidget(text);
-    // placeWidget(line);
-    // placeWidget(pushButt);
-
-    text.resize(win_x, elemSize);
-    text.move(0, elemSize * 0 + 1);
-    line.resize(win_x, elemSize);
-    line.move(0, elemSize * 1 + 1);
-    pushButt.resize(win_x, elemSize);
-    pushButt.move(0, elemSize * 2 + 1);
-}
-App::~App()
+    text(new QLabel("You can input only numbers from 1 till 100!", this)),
+    line(new QLineEdit(this)),
+    pushButt(new QPushButton("Build magic square", this)),
+    elnum(0)
 {
 
 }
 
-
-
-void            App::showWindow()
+void    App::Execute()
 {
-    Window.show();
+    vector<QWidget*>     widgs;
+    widgs.push_back(text);
+    widgs.push_back(line);
+    widgs.push_back(pushButt);
+
+    uint l = 0;
+    // for (QWidget *i in widgs) {
+    while ( l < widgs.size() ) {
+        QWidget *i = widgs[l++];
+        i->resize(x, elemSize);
+        i->move(0, (marginBottom + elemSize) * elnum++);
+    }
+    text->setTextInteractionFlags(Qt::NoTextInteraction);
+    line->setMaxLength(3);
+    line->setInputMask("D00");
+    pushButt->setDefault(true);
+
+    QObject::connect(pushButt, SIGNAL(clicked()), this, SLOT(catchClick()));
+
+    this->resize(x, (marginBottom + elemSize) * elnum);
+    this->show();
 }
 
-bool             App::catchClick()
+
+
+void             App::catchClick()
 {
-    return false;
+    QString lineContent = line->text();
+
+    if (lineContent.toInt() > 100 || lineContent.toInt() < 1) {
+        text->setStyleSheet("QLabel { color: red; }");
+    } else {
+        text->setStyleSheet("QLabel { color: black; }");
+        printMagicSqure();
+    }
+
+    line->clear();
 }
-
-void            App::putError()
-{
-
-}
-
 void            App::printMagicSqure()
 {
-
+    // MagicSqure      square();
 }
-

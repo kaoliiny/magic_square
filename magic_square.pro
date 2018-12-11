@@ -6,6 +6,9 @@ TEMPLATE = app
 TARGET = magic_square
 INCLUDEPATH += includes/
 QT += core gui widgets
+QMAKE_CXX = clang++
+CONFIG += c++11
+QMAKE_CXXFLAGS += -std=c++11
 
 # Input
 HEADERS += includes/MagicSquare.h includes/App.h

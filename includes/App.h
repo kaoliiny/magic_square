@@ -4,34 +4,39 @@
 
 # include <QApplication>
 # include <QtWidgets>
-// # include <QMainWindow>
-// # include <QLabel>
-// # include <QLineEdit>
+ 
+# include <vector>
+# include <unistd.h>
 
 # include "MagicSquare.h"
 
 using namespace std;
 
 
-class App {
+class App : public QMainWindow {
+
+Q_OBJECT
 
 public:
 	App();
-	~App();
+	virtual ~App() {};
 
-    void    showWindow();
-    bool    catchClick();
-    void    putError();
-    void    printMagicSqure();
+    void                printMagicSqure();
+    void                Execute();
 
 private:
-    QMainWindow         Window;
-    QLineEdit           text;
-    QLineEdit           line;
-    QPushButton         pushButt;
+    QLabel              *text;
+    QLineEdit           *line;
+    QPushButton         *pushButt;
 
-    static const int    win_x = 300;
-    static const int    win_y = 120;
+    const uint          elemSize = 30;
+    const uint          marginBottom = 5;
+    const uint          x = 300;
+    uint                elnum;
+
+
+public slots:
+    void                catchClick();
 
 };
 
