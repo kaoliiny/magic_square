@@ -2,16 +2,8 @@
 #ifndef APP_H
 # define APP_H
 
-# include <QApplication>
-# include <QtWidgets>
- 
-# include <vector>
-# include <unistd.h>
-
+# include "main.h"
 # include "MagicSquare.h"
-
-using namespace std;
-
 
 class App : public QMainWindow {
 
@@ -19,20 +11,21 @@ Q_OBJECT
 
 public:
 	App();
-	virtual ~App() {};
+	virtual ~App();
 
-    void                printMagicSqure();
     void                Execute();
+    void                printMagicSqure(uint size);
 
 private:
-    QLabel              *text;
-    QLineEdit           *line;
-    QPushButton         *pushButt;
+    QLabel                  *text;
+    QLineEdit               *line;
+    QPushButton             *pushButt;
+    vector<MagicSquare*>    squares;
 
-    const uint          elemSize = 30;
-    const uint          marginBottom = 5;
-    const uint          x = 300;
-    uint                elnum;
+    const uint              elemSize = 30;
+    const uint              marginBottom = 5;
+    const uint              x = 300;
+    uint                    elnum;
 
 
 public slots:

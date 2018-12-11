@@ -1,13 +1,21 @@
 
 #include "App.h"
+
 App::App() :
     text(new QLabel("You can input only numbers from 1 till 100!", this)),
     line(new QLineEdit(this)),
     pushButt(new QPushButton("Build magic square", this)),
     elnum(0)
+{}
+App::~App()
 {
+    delete text;
+    delete line;
+    delete pushButt;
+    for (auto *i : squares)
+        delete i;
+};
 
-}
 
 void    App::Execute()
 {
@@ -16,10 +24,7 @@ void    App::Execute()
     widgs.push_back(line);
     widgs.push_back(pushButt);
 
-    uint l = 0;
-    // for (QWidget *i in widgs) {
-    while ( l < widgs.size() ) {
-        QWidget *i = widgs[l++];
+    for (QWidget *i : widgs) {
         i->resize(x, elemSize);
         i->move(0, (marginBottom + elemSize) * elnum++);
     }
@@ -44,12 +49,12 @@ void             App::catchClick()
         text->setStyleSheet("QLabel { color: red; }");
     } else {
         text->setStyleSheet("QLabel { color: black; }");
-        printMagicSqure();
+        printMagicSqure(lineContent.toInt());
     }
 
     line->clear();
 }
-void            App::printMagicSqure()
+void            App::printMagicSqure(uint size)
 {
-    // MagicSqure      square();
+    squares.push_back(new MagicSquare(size));
 }
