@@ -54,6 +54,7 @@ dkms.conf
 
 # My addings
 _*
+moc_*
 test
 task
 magic_square
