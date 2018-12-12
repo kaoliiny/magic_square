@@ -12,8 +12,9 @@ App::~App()
     delete text;
     delete line;
     delete pushButt;
-    for (auto *i : squares)
+    for (auto *i : squares) {
         delete i;
+    }
 };
 
 

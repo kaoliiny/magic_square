@@ -12,16 +12,15 @@ public:
     MagicSquare(uint size);
     virtual ~MagicSquare();
 
-
 private:
     uint              _size;
-    vector<uint>      _vec;
+    uint              **MS;
     vector<QLabel*>   _lab;
 
-    const uint        elemSize = 30;
+    uint              elemSize;
     uint              elnum;
 
-    void              print() const;
+    void              print();
     void              buildSquare();
 
 };
