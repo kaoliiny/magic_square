@@ -14,5 +14,4 @@
 using namespace std;
 typedef unsigned int uint;
 
-
 #endif // MAIN_H

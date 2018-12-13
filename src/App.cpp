@@ -25,6 +25,7 @@ void    App::Execute()
     widgs.push_back(line);
     widgs.push_back(pushButt);
 
+// Installing QWidgets to QMainWindow
     for (QWidget *i : widgs) {
         i->resize(x, elemSize);
         i->move(0, (marginBottom + elemSize) * elnum++);
@@ -34,15 +35,22 @@ void    App::Execute()
     line->setInputMask("D00");
     pushButt->setDefault(true);
 
+// Set up event listeners and handlers
     QObject::connect(pushButt, SIGNAL(clicked()), this, SLOT(catchClick()));
 
+    // keyEnterReceiver*        key = new keyEnterReceiver();
+    // line->installEventFilter(key);
+
+// Show QMainWindow
     this->resize(x, (marginBottom + elemSize) * elnum);
     this->show();
+
+    // delete key;
 }
 
 
 
-void             App::catchClick()
+void            App::printMagicSqure()
 {
     QString lineContent = line->text();
 
@@ -50,12 +58,27 @@ void             App::catchClick()
         text->setStyleSheet("QLabel { color: red; }");
     } else {
         text->setStyleSheet("QLabel { color: black; }");
-        printMagicSqure(lineContent.toInt());
+        squares.push_back(new MagicSquare( lineContent.toInt() ));
     }
 
     line->clear();
 }
-void            App::printMagicSqure(uint size)
+void             App::catchClick()
 {
-    squares.push_back(new MagicSquare(size));
+    printMagicSqure();
 }
+// bool            keyEnterReceiver::eventFilter(QObject *obj, QEvent *event)
+// {
+//     if (event->type()==QEvent::KeyPress) {
+//         QKeyEvent* key = static_cast<QKeyEvent*>(event);
+//         if ( (key->key()==Qt::Key_Enter) || (key->key()==Qt::Key_Return) ) {
+//             dynamic_cast<App*>(obj)->printMagicSqure();
+//         } else {
+//             return QObject::eventFilter(obj, event);
+//         }
+//         return true;
+//     } else {
+//         return QObject::eventFilter(obj, event);
+//     }
+//     return false;
+// }

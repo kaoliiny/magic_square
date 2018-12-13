@@ -14,7 +14,7 @@ public:
 	virtual ~App();
 
     void                Execute();
-    void                printMagicSqure(uint size);
+    void                printMagicSqure();
 
 private:
     QLabel                  *text;
@@ -28,10 +28,16 @@ private:
     const int               limit = 90;
     uint                    elnum;
 
-
 public slots:
     void                catchClick();
 
 };
+
+// class keyEnterReceiver : public QObject
+// {
+//     Q_OBJECT
+// protected:
+//     bool eventFilter(QObject* obj, QEvent* event);
+// };
 
 #endif // APP_H

@@ -55,6 +55,9 @@ dkms.conf
 # My addings
 _*
 moc_*
+*~
+Makefile
 test
+tests
 task
 magic_square

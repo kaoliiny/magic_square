@@ -2,9 +2,7 @@
 #include "MagicSquare.h"
 
 MagicSquare::MagicSquare(uint size) :
-    QWidget(),
     _size(size),
-    MS(new uint*[size]),
     _lab(vector<QLabel*>(size * size, nullptr))
 {
     stringstream    sz;
@@ -23,34 +21,27 @@ MagicSquare::MagicSquare(uint size) :
         10))))))))) * 5;
     elemSize = elemSize < 30 ? 30 : elemSize;
 
-    for (uint i = 0; i < size; i++) {
-        MS[i] = new uint[size];
-        bzero(MS[i], sizeof(*MS[i]) * size);
-    }
-
-    this->buildSquare();
-    this->print();
+    MS = this->buildSquare() + 1;
+    this->printSquare();
 }
 MagicSquare::~MagicSquare()
 {
-    for (QLabel *i : _lab) {
+    delete (MS - 1);
+    for (QLabel *i : _lab)
         delete i;
-    }
 }
 
 
-
-void                MagicSquare::print()
+void
+MagicSquare::printSquare()
 {
     const uint   ses = _size * elemSize;
     uint         curX = 0;
     uint         curY = 0;
     uint         i = 0;
-    uint         j = 0;
 
     for (QLabel *l : _lab) {
-        l = new QLabel(to_string(MS[i][j++]).c_str(), this);
-        j == _size && !(j = 0) && i++;
+        l = new QLabel(to_string(MS[i++]).c_str(), this);
 
         l->setTextInteractionFlags(Qt::NoTextInteraction);
         l->resize(elemSize, elemSize);
@@ -64,39 +55,120 @@ void                MagicSquare::print()
     this->show();
 }
 
-void                MagicSquare::buildSquare()
+
+magsq_t
+magsq_struct(int n)
 {
-   uint i, j, x;
+    int *out = new int[1 + n * n];
 
-   uint row = 0;                       // start position of row
-   uint col = _size / 2;               // and column
+    bzero(out, sizeof(int) * (1 + n * n));
+    *out = n;
+    return out;
+}
 
-   for ( i = 0; i < _size ; i++ ) {
-        for ( j = 0 ; j < _size; j++ )
-            MS[i][j] = 0;              //initialize to 0 your matrix
-   }
+magsq_t
+MagicSquare::buildSquare()
+{
+    int         n = _size;
 
-   MS[row][col] = 1;                   //position to start the counting
+    if (n % 4 == 0)
+        return buildDoublyEvenSquare(n);
+    else if (n % 2 == 0)
+        return buildEvenSquare(n);
+    else
+        return buildOddSquare(n);
+}
 
-   for ( x = 2; x <= _size * _size; x++ )
-   {
-      int r = row - 1, c = col - 1;    // test positions
-      if (r < 0) r += _size;
-      if (c < 0) c += _size;
-      if (MS[r][c] > 0) {
-        row++;
-        if ( row >= _size )
-            row -= _size;
-      } else {
-         row = r;
-         col = c;
-      }
-      MS[row][col] = x;
-   }
 
-   for ( i = 0; i < _size; i++ ) {
-        for ( j = 0; j < _size; j++ )
-            cout << MS[i][j] << " ";
-        cout << endl;
-   }
+LAMBDA_GET_COORD(magsq_xcoord, y, x, width, D2_1(x, y, width))
+LAMBDA_GET_COORD(magsq_ycoord, x, y, width, D2_1(x, y, width))
+LAMBDA_GET_COORD(magsq_dcoord, unused, d, width, D2_1(d, d, width))
+LAMBDA_GET_COORD(magsq_dicoord, unused, d, width, D2_1((width-1)-d, d, width))
+
+int
+magsq_linesum(magsq_t ms, int seed, int (*get_coord)(int,int,int))
+{
+    int         *map = ms + 1;
+    int         width = *ms;
+    int         total = 0;
+
+    for (int var = 0; var < width; ++var)
+        total += map[get_coord(seed, var, width)];
+
+    return total;
+}
+
+magsq_t
+MagicSquare::buildOddSquare(int n)
+{
+    magsq_t     out = magsq_struct(n);
+    int         *map = out + 1;
+    int         coord[2] = {n / 2, 0};
+
+    map[D2_1A(coord, n)] = 1;
+
+    for (int i = 1; i < n*n; ++i) {
+        ADDA(coord, +1, -1);
+
+        while(map[D2_1A(coord, n)] > 0 || (coord[0] == -1 && coord[1] == n))
+            ADDA(coord, -1, +2);
+
+        coord[0] = WRAP(coord[0], n);
+        coord[1] = WRAP(coord[1], n);
+        map[D2_1A(coord, n)] = i + 1;
+    }
+
+    return out;
+}
+
+magsq_t
+MagicSquare::buildDoublyEvenSquare(int n)
+{
+    magsq_t     out = magsq_struct(n);
+    int         *map = out + 1;
+
+    for (int i = 0; i < n*n; ++i)
+        map[i] = i + 1;
+
+    YXLOOP(0, n/4, 0, n/4)
+        SWAPA(map, D2_1(x, y, n), D2_1((n-1)-x, (n-1)-y, n));
+
+    YXLOOP(0, n/4, 3 * n/4, n)
+        SWAPA(map, D2_1(x, y, n), D2_1((n-1)-x, (n-1)-y, n));
+
+    YXLOOP(n/4, 2 * n/4, n/4, 3 * n/4)
+        SWAPA(map, D2_1(x, y, n), D2_1((n-1)-x, (n-1)-y, n));
+
+    return out;
+}
+
+magsq_t
+MagicSquare::buildEvenSquare(int n)
+{
+    magsq_t     out = magsq_struct(n);
+    magsq_t     quadrant = buildOddSquare(n / 2);
+    int         *map = out + 1;
+    int const   qn = n/2;
+    int const   qsq = qn * qn;
+    int const   xl = (qn + 1) / 2;
+    int const   xr = xl - 2;
+    int const   ym = xl - 1;
+
+    YXLOOP(0, qn, 0, qn) {
+        map[D2_1(x, y, n)] = (quadrant + 1)[D2_1(x, y, qn)];
+        map[D2_1(x + qn, y + qn, n)] = (quadrant + 1)[D2_1(x, y, qn)] + qsq;
+        map[D2_1(x + qn, y, n)] = (quadrant + 1)[D2_1(x, y, qn)] + 2 * qsq;
+        map[D2_1(x, y + qn, n)] = (quadrant + 1)[D2_1(x, y, qn)] + 3 * qsq;
+    }
+
+    delete quadrant;
+
+    YXLOOP(0, qn, 0, xl)
+        if ((x == 0 && y != ym) || (x == xl - 1 && y == ym) || (x > 0 && x < xl - 1))
+            SWAPA(map, D2_1(x, y, n), D2_1(x, y + qn, n));
+
+    YXLOOP(0, qn, n - xr, n)
+        SWAPA(map, D2_1(x, y, n), D2_1(x, y + qn, n));
+
+    return out;
 }
