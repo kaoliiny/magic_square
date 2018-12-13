@@ -6,8 +6,6 @@ TEMPLATE = app
 TARGET = magic_square
 INCLUDEPATH += includes/
 QT += core gui widgets
-# CXX = g
-# QMAKE_CXX = /Users/vbrazas/.brew/bin/g++-8
 CONFIG += c++11
 QMAKE_CXXFLAGS += -std=c++11
 

@@ -2,11 +2,14 @@
 #include "App.h"
 
 App::App() :
-    text(new QLabel("You can input only numbers from 1 till 90!", this)),
     line(new QLineEdit(this)),
     pushButt(new QPushButton("Build magic square", this)),
     elnum(0)
-{}
+{
+    stringstream    ss;
+    ss << "You can input only numbers from 3 till " << limit;
+    this->text = new QLabel(ss.str().c_str(), this);
+}
 App::~App()
 {
     delete text;
@@ -38,14 +41,10 @@ void    App::Execute()
 // Set up event listeners and handlers
     QObject::connect(pushButt, SIGNAL(clicked()), this, SLOT(catchClick()));
 
-    // keyEnterReceiver*        key = new keyEnterReceiver();
-    // line->installEventFilter(key);
-
 // Show QMainWindow
     this->resize(x, (marginBottom + elemSize) * elnum);
     this->show();
 
-    // delete key;
 }
 
 
@@ -53,12 +52,13 @@ void    App::Execute()
 void            App::printMagicSqure()
 {
     QString lineContent = line->text();
+    int     lci = lineContent.toInt();
 
-    if (lineContent.toInt() > limit || lineContent.toInt() < 1) {
+    if (lci < 3 || lci > limit) {
         text->setStyleSheet("QLabel { color: red; }");
     } else {
         text->setStyleSheet("QLabel { color: black; }");
-        squares.push_back(new MagicSquare( lineContent.toInt() ));
+        squares.push_back(new MagicSquare(lci));
     }
 
     line->clear();
@@ -67,18 +67,3 @@ void             App::catchClick()
 {
     printMagicSqure();
 }
-// bool            keyEnterReceiver::eventFilter(QObject *obj, QEvent *event)
-// {
-//     if (event->type()==QEvent::KeyPress) {
-//         QKeyEvent* key = static_cast<QKeyEvent*>(event);
-//         if ( (key->key()==Qt::Key_Enter) || (key->key()==Qt::Key_Return) ) {
-//             dynamic_cast<App*>(obj)->printMagicSqure();
-//         } else {
-//             return QObject::eventFilter(obj, event);
-//         }
-//         return true;
-//     } else {
-//         return QObject::eventFilter(obj, event);
-//     }
-//     return false;
-// }

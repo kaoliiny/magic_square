@@ -25,19 +25,12 @@ private:
     const uint              elemSize = 30;
     const uint              marginBottom = 5;
     const uint              x = 300;
-    const int               limit = 90;
+    const int               limit = 100;
     uint                    elnum;
 
 public slots:
     void                catchClick();
 
 };
-
-// class keyEnterReceiver : public QObject
-// {
-//     Q_OBJECT
-// protected:
-//     bool eventFilter(QObject* obj, QEvent* event);
-// };
 
 #endif // APP_H

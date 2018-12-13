@@ -18,7 +18,7 @@ MagicSquare::MagicSquare(uint size) :
         (size < 10000000 ? 7 :
         (size < 100000000 ? 8 :
         (size < 1000000000 ? 9 :
-        10))))))))) * 5;
+        10))))))))) * 18;
     elemSize = elemSize < 30 ? 30 : elemSize;
 
     MS = this->buildSquare() + 1;
@@ -79,11 +79,6 @@ MagicSquare::buildSquare()
         return buildOddSquare(n);
 }
 
-
-LAMBDA_GET_COORD(magsq_xcoord, y, x, width, D2_1(x, y, width))
-LAMBDA_GET_COORD(magsq_ycoord, x, y, width, D2_1(x, y, width))
-LAMBDA_GET_COORD(magsq_dcoord, unused, d, width, D2_1(d, d, width))
-LAMBDA_GET_COORD(magsq_dicoord, unused, d, width, D2_1((width-1)-d, d, width))
 
 int
 magsq_linesum(magsq_t ms, int seed, int (*get_coord)(int,int,int))
@@ -146,7 +141,7 @@ magsq_t
 MagicSquare::buildEvenSquare(int n)
 {
     magsq_t     out = magsq_struct(n);
-    magsq_t     quadrant = buildOddSquare(n / 2);
+    magsq_t     quadrant = buildOddSquare(n / 2) + 1;
     int         *map = out + 1;
     int const   qn = n/2;
     int const   qsq = qn * qn;
@@ -155,16 +150,18 @@ MagicSquare::buildEvenSquare(int n)
     int const   ym = xl - 1;
 
     YXLOOP(0, qn, 0, qn) {
-        map[D2_1(x, y, n)] = (quadrant + 1)[D2_1(x, y, qn)];
-        map[D2_1(x + qn, y + qn, n)] = (quadrant + 1)[D2_1(x, y, qn)] + qsq;
-        map[D2_1(x + qn, y, n)] = (quadrant + 1)[D2_1(x, y, qn)] + 2 * qsq;
-        map[D2_1(x, y + qn, n)] = (quadrant + 1)[D2_1(x, y, qn)] + 3 * qsq;
+        map[D2_1(x, y, n)] = quadrant[D2_1(x, y, qn)];
+        map[D2_1(x + qn, y + qn, n)] = quadrant[D2_1(x, y, qn)] + qsq;
+        map[D2_1(x + qn, y, n)] = quadrant[D2_1(x, y, qn)] + 2 * qsq;
+        map[D2_1(x, y + qn, n)] = quadrant[D2_1(x, y, qn)] + 3 * qsq;
     }
 
-    delete quadrant;
+    delete (quadrant - 1);
 
     YXLOOP(0, qn, 0, xl)
-        if ((x == 0 && y != ym) || (x == xl - 1 && y == ym) || (x > 0 && x < xl - 1))
+        if ( (x == 0 && y != ym)
+        || (x == xl - 1 && y == ym)
+        || (x > 0 && x < xl - 1) )
             SWAPA(map, D2_1(x, y, n), D2_1(x, y + qn, n));
 
     YXLOOP(0, qn, n - xr, n)
